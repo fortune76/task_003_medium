@@ -90,39 +90,40 @@ void find_item_in_db(char* date, char* db_path) {
 void find_max_sales(char* db_path) {
     FILE* f = fopen(db_path, "r");
     char line[MAX_LINE_LEN];
-    int counter = 0;
+    int file_size = 0;
     while (fgets(line, MAX_LINE_LEN - 1, f) != NULL) {
-        counter++;
+        file_size++;
     }
-    Field* file_arr = calloc(counter * sizeof(Field), sizeof(Field));
+    Field* file_arr = calloc(file_size * sizeof(Field), sizeof(Field));
     Field item;
     fclose(f);
     f = fopen(db_path, "r");
-    int counter2 = 0;
-    while (fgets(line, MAX_LINE_LEN - 1, f) != NULL) {
-        sscanf(line, "%10s %8s %1023s %d", item.date, item.time, item.name, &item.price);
-        correct_line(item.name);
-        file_arr[counter2] = item;
-        counter2++;
+    for (int i = 0; i < file_size; i++) {
+        if (fgets(line, MAX_LINE_LEN - 1, f) != NULL) {
+            sscanf(line, "%10s %8s %1023s %d", item.date, item.time, item.name, &item.price);
+            correct_line(item.name);
+            file_arr[i] = item;
+        }
     }
-    sort(file_arr, counter2);
-    int arr_size = uniq_count(file_arr, counter2);
+    fclose(f);
+    sort(file_arr, file_size);
+    int arr_size = uniq_count(file_arr, file_size);
     Field* sum_arr = calloc(arr_size * sizeof(Field), sizeof(Field));
-    int counter3 = 0;
-    for (int i = 0; i < counter2; i++) {
+    int counter = 0;
+    for (int i = 0; i < file_size; i++) {
         if (strcmp(file_arr[i].name, file_arr[i + 1].name) != 0) {
-            sum_arr[counter3] = file_arr[i];
-            sum_arr[counter3].price = 0;
-            counter3++;
-            if (i == counter2 - 2) {
-                sum_arr[counter3 + 1] = file_arr[i + 1];
-                sum_arr[counter3 + 1].price = 0;
+            sum_arr[counter] = file_arr[i];
+            sum_arr[counter].price = 0;
+            counter++;
+            if (i == file_size - 2) {
+                sum_arr[counter + 1] = file_arr[i + 1];
+                sum_arr[counter + 1].price = 0;
             }
         }
     }
 
     for (int i = 0; i < arr_size; i++) {
-        for (int j = 0; j < counter2; j++) {
+        for (int j = 0; j < file_size; j++) {
             if (strcmp(file_arr[j].name, sum_arr[i].name) == 0) {
                 sum_arr[i].price += file_arr[j].price;
             }
@@ -140,8 +141,8 @@ void find_max_sales(char* db_path) {
     } else {
         printf("%s %d", max.name, max.price);
     }
+    free(file_arr);
     free(sum_arr);
-    fclose(f);
 }
 
 void sort(Field* array, int len) {
