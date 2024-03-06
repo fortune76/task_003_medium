@@ -2,7 +2,7 @@
 
 int menu_input() {
     char menu_option[MAX_STR_LEN] = {0};
-    scanf("%s", menu_option);
+    scanf("%1023s", menu_option);
     int result = 0;
     if (strcmp(menu_option, "ADD") != 0 && strcmp(menu_option, "SHOW") != 0 &&
         strcmp(menu_option, "EXIT") != 0 && strcmp(menu_option, "FIND") != 0 &&
@@ -44,9 +44,9 @@ int check_db_path(int argc_count, char *arg) {
 }
 
 void input_line(char *new_line) {
-    scanf("%s", new_line);
+    scanf("%1023s", new_line);
     char tmp[MAX_LINE_LEN];
-    scanf("%s", tmp);
+    scanf("%1023s", tmp);
     strcat(new_line, " ");
     strcat(new_line, tmp);
 }

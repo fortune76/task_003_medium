@@ -20,7 +20,7 @@ void working_with_db(int args_count, char* path) {
             show_db(db_path);
         } else if (menu == 3) {
             char date[MAX_LINE_LEN];
-            scanf("%s", date);
+            scanf("%1023s", date);
             find_item_in_db(date, db_path);
         } else if (menu == 4) {
             find_max_sales(db_path);
@@ -49,7 +49,6 @@ void show_db(char* database_file) {
             ch_counter++;
         }
     }
-    line[ch_counter] = '\0';
     fclose(f);
 }
 
@@ -76,7 +75,7 @@ void find_item_in_db(char* date, char* db_path) {
     char line[MAX_LINE_LEN];
     int counter = 0;
     while (fgets(line, MAX_LINE_LEN - 1, f) != NULL) {
-        sscanf(line, "%s %s %s %d", item.date, item.time, item.name, &item.price);
+        sscanf(line, "%10s %8s %1023s %d", item.date, item.time, item.name, &item.price);
         if (strcmp(item.date, date) == 0) {
             counter++;
             printf("%s %s %s %d\n", item.date, item.time, item.name, item.price);
@@ -101,7 +100,7 @@ void find_max_sales(char* db_path) {
     f = fopen(db_path, "r");
     int counter2 = 0;
     while (fgets(line, MAX_LINE_LEN - 1, f) != NULL) {
-        sscanf(line, "%s %s %s %d", item.date, item.time, item.name, &item.price);
+        sscanf(line, "%10s %8s %1023s %d", item.date, item.time, item.name, &item.price);
         correct_line(item.name);
         file_arr[counter2] = item;
         counter2++;
@@ -148,11 +147,11 @@ void find_max_sales(char* db_path) {
 void sort(Field* array, int len) {
     Field tmp;
     for (int i = 0; i < len; i++) {
-        for (int i = 0; i < len - 1; i++) {
-            if (array[i].price > array[i + 1].price) {
-                tmp = array[i + 1];
-                array[i + 1] = array[i];
-                array[i] = tmp;
+        for (int j = 0; j < len - 1; j++) {
+            if (array[j].price > array[j + 1].price) {
+                tmp = array[j + 1];
+                array[j + 1] = array[j];
+                array[j] = tmp;
             }
         }
     }
